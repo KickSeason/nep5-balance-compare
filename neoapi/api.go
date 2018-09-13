@@ -11,10 +11,9 @@ import (
 
 //GetAddressNep5Balance get the balance of the asset
 func GetAddressNep5Balance(server string, address string, assetID string) (Nep5BalanceResp, error) {
-	log.Println(address, assetID, server)
 	hash, err := utils.ToHash160(address)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return Nep5BalanceResp{}, err
 	}
 	reader := strings.NewReader(`{
@@ -32,7 +31,6 @@ func GetAddressNep5Balance(server string, address string, assetID string) (Nep5B
 		],
 		"id": 3
 	  }`)
-
 	respBytes, err := http.Request("POST", server, reader)
 	if err != nil {
 		fmt.Print(err.Error())

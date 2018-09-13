@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"nep5-balance-compare/nelapi"
 	"nep5-balance-compare/neoapi"
@@ -14,10 +13,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-/*
-* 当前mainnet高度2569706, testnet高度1657028
-* 测试1000个地址
- */
 const (
 	BlocksPerGroup   = 20
 	DefaultCaseCount = 1000
@@ -63,8 +58,8 @@ func getAddressAndAssetID() {
 		}
 		resp, err := nelapi.GetNep5TransferByBlockIndex(params)
 		if err != nil {
-			fmt.Println(err.Error())
-			continue
+			log.Println(err.Error())
+			return
 		}
 		handleNep5TransferResp(resp)
 		i += 10
@@ -84,7 +79,7 @@ func main() {
 			Name:        "base, b",
 			Usage:       "The base server, usually 2.7.6",
 			Value:       "http://47.254.44.88:10332",
-			Destination: &neoSrv2,
+			Destination: &neoSrv1,
 		},
 		cli.StringFlag{
 			Name:        "compare, c",
@@ -125,7 +120,7 @@ func main() {
 			go func() {
 				resp, err := neoapi.GetAddressNep5Balance(neoSrv1, addr, asset)
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
 					close(ch1)
 					return
 				}
@@ -134,7 +129,7 @@ func main() {
 			go func() {
 				resp, err := neoapi.GetAddressNep5Balance(neoSrv2, addr, asset)
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
 					close(ch2)
 					return
 				}
